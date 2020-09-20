@@ -7,7 +7,7 @@
 # Commands
 ### Run from root dir:
 
-* Start cpp server: ***docker build -t cppserveralex . && docker run -p 80:80 -v /etc/httpd.conf:/etc/httpd.conf:ro -ti cppserveralex*** 
+* Start cpp server: ***docker build -t cppserveralex . && docker run -p 80:8080 -v /etc/httpd.conf:/etc/httpd.conf:ro -ti cppserveralex*** 
 
 * Start check: ***./httptest.py***
 
