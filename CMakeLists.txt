@@ -20,6 +20,6 @@ find_package(Boost 1.57.0 COMPONENTS system filesystem thread REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 
-add_executable(server main.cpp headers/Pool.h headers/MainHandler.h headers/Utils.h headers/FileReadersAndSenders.h)
+add_executable(server main.cpp headers/Server.h headers/MainHandler.h headers/Utils.h headers/FileReadersAndSenders.h headers/ThreadPool.h)
 
 target_link_libraries(server ${Boost_LIBRARIES})

@@ -17,12 +17,12 @@ extern std::string indexFilename;
 
 void MainHandler(tcp::socket* socket) {
 
-
-    //std::ostringstream ss;
-    //ss << std::this_thread::get_id();
-    //std::string threadId = ss.str();
-    //PrintMutex("                                                      Thread  " + threadId + ": get task");
-
+    /*
+    std::ostringstream ss;
+    ss << std::this_thread::get_id();
+    std::string threadId = ss.str();
+    PrintMutex("                                                      Thread  " + threadId + ": get task");
+    */
 
 
     boost::asio::streambuf buffer;

@@ -26,28 +26,61 @@ std::string urlDecode(std::string &fileNameWithPercent) {
     std::string ret;
     char ch;
     int i, ii;
-    for (i=0; i < fileNameWithPercent.length(); i++) {
-        if (int(fileNameWithPercent[i]) == 37) {
-            sscanf(fileNameWithPercent.substr(i + 1, 2).c_str(), "%x", &ii);
-            ch=static_cast<char>(ii);
-            ret+=ch;
-            i=i+2;
-        } else {
-            ret+=fileNameWithPercent[i];
+
+    try {
+        for (i = 0; i < fileNameWithPercent.length(); i++) {
+            if (int(fileNameWithPercent[i]) == 37) {
+                sscanf(fileNameWithPercent.substr(i + 1, 2).c_str(), "%x", &ii);
+                ch = static_cast<char>(ii);
+                ret += ch;
+                i = i + 2;
+            } else {
+                ret += fileNameWithPercent[i];
+            }
         }
+
     }
+
+    catch (std::exception& ex) {
+        PrintMutex("ERR UTILS! 1");
+        std::cerr << ex.what() << std::endl;
+    }
+
     return (ret);
 }
 
 
 std::string getFileName(const std::string &readData, const  int &endOfMethodIndex) {
-    int indexOfStartHttpVersion = readData.find("HTTP");
-    std::string fileName = readData.substr(endOfMethodIndex + 2 , indexOfStartHttpVersion - 6);
-    fileName = urlDecode(fileName);
-    auto ParamStartsIndex = fileName.find("?");
-    if (ParamStartsIndex != std::string::npos) {
-        fileName = fileName.substr(0, ParamStartsIndex);
+
+    if (endOfMethodIndex == -1) {
+        //PrintMutex("BEFORE: ERR GET FILENAME: read data:" + readData + "\n\n end Of method index:" + std::to_string(endOfMethodIndex));
+        return "";
     }
+
+    std::string fileName;
+    try {
+
+        int indexOfStartHttpVersion = readData.find("HTTP");
+
+        if (endOfMethodIndex + 2 >= indexOfStartHttpVersion - 6 || indexOfStartHttpVersion - 6 >= readData.size() -1
+        || endOfMethodIndex + 2 >= readData.size() -1) {
+            //PrintMutex("ERR GET FILENAME: read data:" + readData + "\n\n end Of method index:" + std::to_string(endOfMethodIndex));
+            return "";
+        }
+
+        fileName = readData.substr(endOfMethodIndex + 2, indexOfStartHttpVersion - 6);
+        fileName = urlDecode(fileName);
+        auto ParamStartsIndex = fileName.find("?");
+        if (ParamStartsIndex != std::string::npos) {
+            fileName = fileName.substr(0, ParamStartsIndex);
+        }
+    }
+
+    catch (std::exception& ex) {
+        PrintMutex("ERR UTILS! getFileName");
+        std::cerr << ex.what() << std::endl;
+    };
+
     return fileName;
 }
 
