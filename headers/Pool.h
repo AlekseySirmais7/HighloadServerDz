@@ -11,6 +11,9 @@
 #include "iostream"
 #include "../headers/Utils.h"
 
+#include "./SQueue.h"
+#include "./MainHandler.h"
+
 
 class threadPool {
 
@@ -25,9 +28,19 @@ private:
 
 public:
 
+    SQueue<tcp::socket*> * queuePtr;
+
+
     threadPool(std::size_t poolSize ) : work(io_servicePool ), availableThreadCount(poolSize ) {
+
+        queuePtr = new SQueue<tcp::socket*>(nullptr);
+
         for (std::size_t i = 0; i < poolSize; ++i ) {
             threadsGr.create_thread(boost::bind(&boost::asio::io_service::run, &io_servicePool ) );
+
+            io_servicePool.post( boost::bind( &threadPool::StartTaskIfExist, this ) );
+            // boost::bind(MainHandler, socketPtr)
+            //         io_servicePool.post(boost::bind(&threadPool::taskWork, this, boost::function<void()>( task ) ) );
         }
     }
 
@@ -42,8 +55,12 @@ public:
         }
     }
 
-    template <typename Task>
-    void runTask(Task task ) {
+    //template <typename Task>
+    void runTask(tcp::socket* socketPtr ) {
+
+        queuePtr->push(socketPtr);
+
+        /*
         //PrintMutex("runTask");
         bool needLock = false;
         availableMutex.lock();
@@ -77,20 +94,35 @@ public:
 
         // post task into the queue.
         io_servicePool.post(boost::bind(&threadPool::taskWork, this, boost::function<void()>( task ) ) );
+
+         */
     }
 
 private:
 
-    void taskWork(boost::function<void()> task ) {
+    void StartTaskIfExist() {
+
+        tcp::socket * socketPtr;
+        while (true) {
+            socketPtr = queuePtr->popIfNotEmpty();
+            if (socketPtr != nullptr) {
+                MainHandler(socketPtr);
+            }
+            usleep(30000);
+
+        }
+
+
+        /*
         try {
+
             task();
         }
         catch ( const std::exception& ) {
             // send 500
         }
+         */
 
-        boost::unique_lock< boost::mutex > lock(availableMutex );
-        ++availableThreadCount;
     }
 };
 

@@ -6,7 +6,7 @@
 #define SERVER_MAINHANDLER_H
 
 #include <boost/asio.hpp>
-#include <thread>
+//#include <thread>
 #include <fstream>
 #include "../headers/Utils.h"
 #include "../headers/FileReadersAndSenders.h"
@@ -17,13 +17,12 @@ extern std::string indexFilename;
 
 void MainHandler(tcp::socket* socket) {
 
-    /*
-    std::ostringstream ss;
-    ss << std::this_thread::get_id();
-    std::string threadId = ss.str();
 
-    PrintMutex("Thread  " + threadId + ": get task");
-    */
+    //std::ostringstream ss;
+    //ss << std::this_thread::get_id();
+    //std::string threadId = ss.str();
+    //PrintMutex("                                                      Thread  " + threadId + ": get task");
+
 
 
     boost::asio::streambuf buffer;
@@ -48,6 +47,10 @@ void MainHandler(tcp::socket* socket) {
 
     //PrintMutex("FileName:" + fileName );
 
+
+    if (fileName.size() == 0) {
+        fileName += indexFilename;
+    } else
 
     if (fileName[fileName.size() -1] == '/') {
         fileName += indexFilename;
@@ -78,6 +81,7 @@ void MainHandler(tcp::socket* socket) {
         send405(socket);
     }
 
+    socket->shutdown(boost::asio::socket_base::shutdown_both);
     socket->close();
     free(socket);
 

@@ -4,18 +4,21 @@
 #include "../headers/Pool.h"
 #include "../headers/MainHandler.h"
 
+#include <future>
 
 using boost::asio::ip::tcp;
 
-extern std::string ROOTPATH = "/app/";
+extern  std::string ROOTPATH = "/app/";
 
-extern std::string indexFilename = "index.html";
+extern  std::string indexFilename = "index.html";
 
 extern size_t MAX_CHUNK_SIZE = 1048576; // 1 Mb
 
 const size_t serverPort = 80;
 
 extern size_t threadsCount = 4;
+
+
 
 int main() {
 
@@ -25,6 +28,7 @@ int main() {
     }
 
     threadPool ThreadPool(threadsCount);
+
     try {
 
         boost::asio::io_service io_service;
@@ -33,18 +37,21 @@ int main() {
 
         tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), serverPort));
 
+
         while (true) {
 
             tcp::socket* socketPtr = new tcp::socket(io_service);
 
 
+
+
             acceptor.accept(*socketPtr);
+            //acceptor.async_accept(socket, handler);
 
-            // or spawn thread and add to task to save queue
-            // need rewrite some thread task-work to endless loop
-            // queue.push(socketPtr);
 
-            ThreadPool.runTask(boost::bind(MainHandler, socketPtr));
+
+            ThreadPool.queuePtr->push(socketPtr);
+
         }
     }
 
