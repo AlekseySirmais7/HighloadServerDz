@@ -45,6 +45,10 @@ void MainHandler(tcp::socket* socket) {
 
     std::string fileName = getFileName(readFromClientStr, endOfMethodIndex);
 
+    if (fileName.compare("SomeTrashCase")==0) {
+        goto FREESOCKET;
+    }
+
     //PrintMutex("FileName:" + fileName );
 
 
@@ -81,6 +85,9 @@ void MainHandler(tcp::socket* socket) {
         send405(socket);
     }
 
+
+
+    FREESOCKET:
     socket->shutdown(boost::asio::socket_base::shutdown_both);
     socket->close();
     free(socket);

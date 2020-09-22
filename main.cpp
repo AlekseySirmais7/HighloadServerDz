@@ -25,6 +25,9 @@ int main() {
         exit(-1);
     }
 
+   // threadsCount = 10;
+
+
     queuePtr = new SQueue<tcp::socket*>(nullptr);
 
     ThreadPool tp(threadsCount);

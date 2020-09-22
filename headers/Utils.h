@@ -54,7 +54,7 @@ std::string getFileName(const std::string &readData, const  int &endOfMethodInde
 
     if (endOfMethodIndex == -1) {
         //PrintMutex("BEFORE: ERR GET FILENAME: read data:" + readData + "\n\n end Of method index:" + std::to_string(endOfMethodIndex));
-        return "";
+        return "SomeTrashCase";
     }
 
     std::string fileName;
@@ -65,7 +65,7 @@ std::string getFileName(const std::string &readData, const  int &endOfMethodInde
         if (endOfMethodIndex + 2 >= indexOfStartHttpVersion - 6 || indexOfStartHttpVersion - 6 >= readData.size() -1
         || endOfMethodIndex + 2 >= readData.size() -1) {
             //PrintMutex("ERR GET FILENAME: read data:" + readData + "\n\n end Of method index:" + std::to_string(endOfMethodIndex));
-            return "";
+            return "SomeTrashCase";
         }
 
         fileName = readData.substr(endOfMethodIndex + 2, indexOfStartHttpVersion - 6);

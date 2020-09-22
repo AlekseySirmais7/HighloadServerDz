@@ -8,6 +8,8 @@
 ### Run from root dir:
 
 * Start cpp server: ***docker build -t cppserveralex . && docker run -p 80:8080 -v /etc/httpd.conf:/etc/httpd.conf:ro -ti cppserveralex*** 
+(mb Segmentation fault (core dumped) while ab test in docket, need run local no docker)
+
 
 * Start check: ***./httptest.py***
 
