@@ -17,6 +17,8 @@ const size_t serverPort = 8080;
 
 extern size_t threadsCount = 4;
 
+boost::asio::io_service * ioServicePtr;
+ip::tcp::acceptor* acceptorPtr;
 
 int main() {
 
@@ -30,13 +32,31 @@ int main() {
 
     queuePtr = new SQueue<tcp::socket*>(nullptr);
 
-    ThreadPool tp(threadsCount);
 
     boost::asio::io_service ioService;
+
+    ioServicePtr = &ioService;
+
+
+
     MyServer server(ioService );
+
+    acceptorPtr = server.acceptor;
+
     server.start(serverPort);
+
+
+
+    ThreadPool tp(threadsCount);
+
+
     PrintMutex("run!");
     ioService.run();
+
+    while (true) {
+        usleep(300000000);
+    }
+
     PrintMutex("end run!");
     return 0;
 }

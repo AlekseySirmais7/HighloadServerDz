@@ -13,7 +13,7 @@ public:
     SQueue() = delete;
     explicit SQueue(const T &element404);
     ~SQueue();
-    void push(const  T element);
+     void push(const  T element);
     T  popIfNotEmpty();
 
     //SQueue(const SQueue&) = delete;
@@ -38,7 +38,7 @@ SQueue<T>::SQueue(const T &element404) {
 }
 
 template <class T>
-void SQueue<T>::push(const T element) {
+ void SQueue<T>::push(const T element) {
     const std::lock_guard<std::mutex> lock(GQueueMutex);
     queue->push(element);
 }

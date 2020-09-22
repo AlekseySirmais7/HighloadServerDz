@@ -12,35 +12,79 @@ using boost::asio::ip::tcp;
 
 extern SQueue<tcp::socket*>* queuePtr;
 
+extern boost::asio::io_service * ioServicePtr;
+extern ip::tcp::acceptor* acceptorPtr;
+
+
 class ThreadPool {
 
 public:
     ThreadPool(size_t threadCount) {
 
         for (int i=0;i < threadCount; i++) {
-            pool.push_back(  new std::thread(workerWork) );
+            pool.push_back( std::thread(NewWorkerWork)  );
+            pool.push_back(std::thread(NewWorkerWorkHandler)  );
         }
     }
 
 private:
 
-    std::vector<std::thread*> pool;
+    std::vector<std::thread> pool;
 
-    void static workerWork() {
+
+    void static NewWorkerWork() {
+
+
+        while (true) {
+            ip::tcp::socket* newSocket = new ip::tcp::socket(*ioServicePtr );
+
+            std::function<void (ip::tcp::socket*, SQueue<ip::tcp::socket*> * ptr)> f = [](ip::tcp::socket* x, SQueue<ip::tcp::socket*> * ptr){
+
+                ptr->push(x);
+
+            };
+
+            acceptorPtr->async_accept(
+                    *newSocket,
+                    boost::bind(
+                            f,
+                            newSocket,
+                            queuePtr
+                    )
+            );
+
+
+            //acceptorPtr->accept(*newSocket);
+
+            queuePtr->push(newSocket);
+
+            //MainHandler(newSocket);
+
+        }
+
+    }
+
+    void static NewWorkerWorkHandler() {
+
         tcp::socket * socketPtr;
-        PrintMutex("START THREAD!");
+        PrintMutex("START THREAD handler");
 
         while (true) {
             socketPtr = queuePtr->popIfNotEmpty();
             if (socketPtr != nullptr) {
-                //PrintMutex("have some work");
                 MainHandler(socketPtr);
             } else {
-                //PrintMutex("No work!");
             }
-            usleep(300);
+            //usleep(300);
+
         }
+
+
+
     }
+
+
+
 
 };
 

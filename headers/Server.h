@@ -33,36 +33,46 @@ public:
         acceptor->bind(endpoint);
         acceptor->listen();
 
+        /*
         ip::tcp::socket* newSocket = new ip::tcp::socket(ioService );
         acceptor->async_accept(
                 *newSocket,
                 boost::bind(
-                        &MyServer::NewAcceptAndPushSocket,
+                        &MyServer::NewWorkerWork,
                         this,
                         newSocket,
                         boost::asio::placeholders::error
                 )
         );
+        */
 
 
     }
 
+    /*
     void NewAcceptAndPushSocket(ip::tcp::socket* oldSocket, const boost::system::error_code& error) {
 
         ip::tcp::socket* newSocket = new ip::tcp::socket(ioService );
         acceptor->async_accept(
                 *newSocket,
                 boost::bind(
-                        &MyServer::NewAcceptAndPushSocket,
+                        &MyServer::NewWorkerWork,
                         this,
                         newSocket,
                         boost::asio::placeholders::error
                 )
         );
-        queuePtr->push(oldSocket);
-    }
 
-private:
+        while (true) {
+            usleep(300000);
+        }
+
+
+        //queuePtr->push(oldSocket);
+    }
+    */
+
+public:
     io_service& ioService;
     ip::tcp::acceptor* acceptor;
 };
